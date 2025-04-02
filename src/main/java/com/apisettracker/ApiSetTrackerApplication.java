@@ -13,7 +13,8 @@ public class ApiSetTrackerApplication extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(ApiSetTrackerApplication.class);
+        return application.sources(ApiSetTrackerApplication.class)
+                .properties("spring.config.name:application,application-wildfly");
     }
 
     public static void main(String[] args) {
