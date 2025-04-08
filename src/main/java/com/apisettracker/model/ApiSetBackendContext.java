@@ -40,7 +40,7 @@ public class ApiSetBackendContext {
     private LocalDateTime addedAt;
 
     @CreatedBy
-    @Column(name = "ADDED_BY", length = 100 , updatable = false)
+    @Column(name = "ADDED_BY", length = 100 )
     private String addedBy;
 
     @LastModifiedDate
