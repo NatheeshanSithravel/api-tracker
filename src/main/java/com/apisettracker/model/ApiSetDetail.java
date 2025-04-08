@@ -37,11 +37,11 @@ public class ApiSetDetail {
     private String ownerName;
 
     @CreatedDate
-    @Column(name = "ADDED_AT", nullable = false, updatable = false)
+    @Column(name = "ADDED_AT", updatable = false)
     private LocalDateTime addedAt;
 
     @CreatedBy
-    @Column(name = "ADDED_BY", length = 100, nullable = false, updatable = false)
+    @Column(name = "ADDED_BY", length = 100, updatable = false)
     private String addedBy;
 
     @LastModifiedDate
