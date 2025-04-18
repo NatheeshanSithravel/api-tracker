@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-@EnableJpaAuditing
 public class ApiSetTrackerApplication extends SpringBootServletInitializer {
 
     @Override
