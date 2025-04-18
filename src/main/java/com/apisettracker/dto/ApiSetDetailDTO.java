@@ -29,11 +29,17 @@ public class ApiSetDetailDTO {
     @NotBlank(message = "Owner name is required")
     @Size(max = 100, message = "Owner name cannot exceed 100 characters")
     private String ownerName;
-    
-    private LocalDateTime addedAt;
+
+    @NotBlank(message = "name is required")
+    @Size(max = 100, message = "name cannot exceed 100 characters")
     private String addedBy;
-    private LocalDateTime modifiedAt;
+
+    @NotBlank(message = "name is required")
+    @Size(max = 100, message = "name cannot exceed 100 characters")
     private String modifiedBy;
+
+    private LocalDateTime addedAt;
+    private LocalDateTime modifiedAt;
     
     private List<ApiSetBackendContextDTO> backendContexts = new ArrayList<>();
 }

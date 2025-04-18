@@ -23,9 +23,15 @@ public class ApiSetBackendContextDTO {
     @NotBlank(message = "Status is required")
     @Size(max = 10, message = "Status cannot exceed 10 characters")
     private String status;
+
+    @NotBlank(message = "name is required")
+    @Size(max = 100, message = "name cannot exceed 100 characters")
+    private String addedBy;
+
+    @NotBlank(message = "name is required")
+    @Size(max = 100, message = "name cannot exceed 100 characters")
+    private String modifiedBy;
     
     private LocalDateTime addedAt;
-    private String addedBy;
     private LocalDateTime modifiedAt;
-    private String modifiedBy;
 }
