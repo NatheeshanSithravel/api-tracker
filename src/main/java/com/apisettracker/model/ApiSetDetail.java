@@ -41,7 +41,7 @@ public class ApiSetDetail {
     private LocalDateTime addedAt;
 
     @CreatedBy
-    @Column(name = "ADDED_BY", length = 100, nullable = false)
+    @Column(name = "ADDED_BY", length = 100 , nullable = false, updatable = false)
     private String addedBy;
 
     @LastModifiedDate
