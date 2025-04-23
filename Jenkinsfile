@@ -6,12 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                // Clone from GitHub using Jenkins credentials
-                git credentialsId: 'github-credentials-id', url: 'https://github.com/NatheeshanSithravel/api-tracker.git'
-            }
-        }
 
         stage('Build') {
             steps {
