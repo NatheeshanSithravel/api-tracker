@@ -20,12 +20,6 @@ pipeline {
                 sh 'mvn test'
             }
         }
-
-        stage('Archive Artifacts') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
-            }
-        }
     }
 
     post {
