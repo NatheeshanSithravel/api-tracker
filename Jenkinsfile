@@ -16,10 +16,10 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Deploy') {
             steps {
-                echo 'Running unit tests...'
-                sh 'mvn test'
+                echo 'Deploying on wildfly server...'
+                sh 'mv target/api-tracker.war /opt/wildfly/standalone/deployments/'
             }
         }
     }
