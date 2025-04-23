@@ -19,7 +19,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying on wildfly server...'
-                sh 'cp target/api-tracker.war /opt/wildfly/standalone/deployments/'
+                sh 'cp target/api-set-tracker.war /opt/wildfly/standalone/deployments/'
             }
         }
     }
