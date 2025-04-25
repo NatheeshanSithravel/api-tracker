@@ -19,7 +19,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying on wildfly server...'
-                sh '/opt/wildfly/bin/./jboss-cli.sh --connect --controller=127.0.0.1:9990 --command="deployment-info --server-groups=main-server-group"'
+                sh '/opt/wildfly/bin/./jboss-cli.sh --user=jenkins --password=qwerty123 --connect --controller=127.0.0.1:9990 --command="deployment-info --server-groups=main-server-group"'
             }
         }
     }
