@@ -19,7 +19,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying on wildfly server...'
-                sh '/opt/wildfly/bin/./jboss-cli.sh --user=jenkins --password=qwerty123 --connect --controller=127.0.0.1:9990 --command=" deploy /var/lib/jenkins/workspace/bitbucket/target/api-set-tracker.war  --server-groups=other-server-group" '
+                sh '/opt/wildfly/bin/./jboss-cli.sh --user=jenkins --password=qwerty123 --connect --controller=192.168.56.103:9990 --command=" deploy /var/lib/jenkins/workspace/bitbucket/target/api-set-tracker.war  --server-groups=other-server-group" '
 
             }
         }
