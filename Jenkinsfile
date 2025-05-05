@@ -12,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building version ${BUILD_VERSION}" 
-                sh 'mvn clean package'
+                sh 'java --version'
             }
         }
     }
