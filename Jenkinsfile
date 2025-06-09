@@ -1,8 +1,7 @@
 pipeline {
     agent any
     tools{
-        jdk 'JDK_21'
-        maven 'Maven 3.9.9'
+        jdk 'jdk-21'
     
     }
     environment {
@@ -14,7 +13,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building version ${BUILD_VERSION}" 
-                sh 'mvn clean install'
+                sh 'mvn clean package'
             }
         }
 
