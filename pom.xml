@@ -80,12 +80,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- JBoss Logging (For WildFly) -->
+        <!-- JBoss Logging (For WildFly) 
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
             <version>3.5.0.Final</version>
-        </dependency>
+        </dependency>   -->
     </dependencies>
 
     <build>
