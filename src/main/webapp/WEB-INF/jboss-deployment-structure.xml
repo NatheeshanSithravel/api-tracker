@@ -1,0 +1,7 @@
+<jboss-deployment-structure>
+  <deployment>
+    <exclusions>
+      <module name="org.slf4j" />
+    </exclusions>
+  </deployment>
+</jboss-deployment-structure>
