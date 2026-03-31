@@ -17,6 +17,7 @@ pipeline {
                     groupId: 'com',
                     version: '0.0.1-SNAPSHOT',
                     repository: 'maven-snapshots',
+                    credentialsId: 'nexus-cred',
                     artifacts: [
                         [
                             artifactId: 'api-set-tracker',
