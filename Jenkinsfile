@@ -16,7 +16,7 @@ pipeline {
                     nexusUrl: '192.168.56.103:8081',
                     groupId: 'com',
                     version: '0.0.1-SNAPSHOT',
-                    repository: 'maven-snapshots',
+                    repository: 'raw-war-backup',
                     credentialsId: 'nexus-cred',
                     artifacts: [
                          [
