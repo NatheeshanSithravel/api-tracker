@@ -13,11 +13,10 @@ pipeline {
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
-                    nexusUrl: 'YOUR_NEXUS_URL',
+                    nexusUrl: '192.168.56.103.8081',
                     groupId: 'com',
                     version: '0.0.1-SNAPSHOT',
                     repository: 'maven-snapshots',
-                    credentialsId: 'nexus-cred',
                     artifacts: [
                         [
                             artifactId: 'api-set-tracker',
