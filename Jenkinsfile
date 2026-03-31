@@ -19,11 +19,11 @@ pipeline {
                     repository: 'maven-snapshots',
                     credentialsId: 'nexus-cred',
                     artifacts: [
-                        [
-                            artifactId: 'api-set-tracker',
-                            classifier: '',
-                            file: 'target/api-set-tracker-0.0.1-SNAPSHOT.war',
-                            type: 'war'
+                         [
+                    artifactId: 'api-set-tracker',
+                    classifier: '',
+                    file: 'target/api-set-tracker.war',
+                    type: 'war'
                         ]
                     ]
                 )
