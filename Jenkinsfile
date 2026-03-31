@@ -1,30 +1,33 @@
 pipeline {
     agent any
-    tools{
-        jdk 'jdk-21'
-    
-    }
-    environment {
-        BUILD_VERSION = "1.0.${BUILD_NUMBER}"
-    }
 
     stages {
-
         stage('Build') {
             steps {
-                echo "Building version ${BUILD_VERSION}" 
                 sh 'mvn clean package'
             }
         }
 
-    }
-
-    post {
-        success {
-            echo '✅ Build completed-uh successfully!'
-        }
-        failure {
-            echo '❌ Build failed-uh'
+        stage('Upload to Nexus') {
+            steps {
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    nexusUrl: 'YOUR_NEXUS_URL',
+                    groupId: 'com.example',
+                    version: '1.0.0',
+                    repository: 'maven-releases',
+                    credentialsId: 'nexus-cred',
+                    artifacts: [
+                        [
+                            artifactId: 'my-app',
+                            classifier: '',
+                            file: 'target/my-app.jar',
+                            type: 'jar'
+                        ]
+                    ]
+                )
+            }
         }
     }
 }
