@@ -45,7 +45,6 @@ pipeline {
 
                 echo "🧹 Fetching file list..."
 
-                # Get file list (HTML) → extract .war names
                 FILE_LIST=$(curl -s -u $CREDS "$BASE_URL/" | \
                     grep -o 'api-tracker-[^"]*\\.war' | \
                     sort)
@@ -53,7 +52,6 @@ pipeline {
                 echo "📦 All files:"
                 echo "$FILE_LIST"
 
-                # Count files
                 COUNT=$(echo "$FILE_LIST" | wc -l)
 
                 echo "Total files: $COUNT"
@@ -71,6 +69,36 @@ pipeline {
                 else
                     echo "✅ No cleanup needed"
                 fi
+                '''
+            }
+        }
+
+        stage('Run WAR Locally') {
+            steps {
+                sh '''
+                set -e
+
+                WAR_FILE=$FILE
+
+                echo "🛑 Stopping existing app (if running)..."
+                PID=$(pgrep -f "$WAR_FILE" || true)
+
+                if [ ! -z "$PID" ]; then
+                    echo "Killing process $PID"
+                    kill $PID || true
+                else
+                    echo "No existing process found"
+                fi
+
+                echo "🚀 Starting WAR locally..."
+
+                nohup java -jar $WAR_FILE > app.log 2>&1 &
+
+                sleep 5
+
+                echo "✅ Application started"
+                echo "📄 Logs: app.log"
+                echo "🌐 Try: http://localhost:8080"
                 '''
             }
         }
