@@ -1,10 +1,51 @@
+properties([
+  parameters([
+    booleanParam(
+      name: 'ROLLBACK',
+      defaultValue: false,
+      description: 'Enable rollback from Nexus'
+    ),
+
+    [$class: 'CascadeChoiceParameter',
+      choiceType: 'PT_SINGLE_SELECT',
+      name: 'ROLLBACK_FILE',
+      description: 'Select backup file from Nexus',
+      referencedParameters: 'ROLLBACK',
+      script: [
+        $class: 'GroovyScript',
+        script: [
+          sandbox: true,
+          script: '''
+            if (!ROLLBACK) {
+                return ["-- Rollback disabled --"]
+            }
+
+            def nexusUrl = "http://192.168.56.103:8081/repository/raw-war-backup/api-set-tracker/"
+            def user = "admin"
+            def pass = "admin"
+
+            def connection = new URL(nexusUrl).openConnection()
+            String basicAuth = user + ":" + pass
+            String encoded = basicAuth.bytes.encodeBase64().toString()
+            connection.setRequestProperty("Authorization", "Basic " + encoded)
+
+            def html = connection.inputStream.text
+
+            def files = []
+            html.eachMatch(/api-tracker-[^"]+\\.war/) { match ->
+                files << match
+            }
+
+            return files.unique().sort().reverse()
+          '''
+        ]
+      ]
+    ]
+  ])
+])
+
 pipeline {
     agent any
-
-    parameters {
-        booleanParam(name: 'ROLLBACK', defaultValue: false, description: 'Enable rollback from Nexus')
-        string(name: 'ROLLBACK_FILE', defaultValue: '', description: 'Enter WAR file name (e.g., api-tracker-2026-04-21_10-30-00.war)')
-    }
 
     environment {
         NEXUS_URL = "http://192.168.56.103:8081"
@@ -43,8 +84,6 @@ pipeline {
                 curl -s -u $CREDS \
                 --upload-file $FILE \
                 "$BASE_URL/$FILE_NAME"
-
-                echo $FILE_NAME > latest_uploaded.txt
                 '''
             }
         }
@@ -68,6 +107,8 @@ pipeline {
                 if [ "$COUNT" -gt 5 ]; then
                     REMOVE_COUNT=$((COUNT - 5))
 
+                    echo "🗑️ Removing $REMOVE_COUNT old files..."
+
                     echo "$FILE_LIST" | head -n $REMOVE_COUNT | while read FILE
                     do
                         echo "Deleting $FILE"
@@ -88,8 +129,8 @@ pipeline {
                 sh '''
                 set -e
 
-                if [ -z "$ROLLBACK_FILE" ]; then
-                    echo "❌ ROLLBACK_FILE is required!"
+                if [ "$ROLLBACK_FILE" = "-- Rollback disabled --" ] || [ -z "$ROLLBACK_FILE" ]; then
+                    echo "❌ Please select a valid rollback file"
                     exit 1
                 fi
 
@@ -109,7 +150,6 @@ pipeline {
                 sh '''
                 set -e
 
-                # Decide which WAR to run
                 if [ "$ROLLBACK" = "true" ]; then
                     WAR_FILE="rollback.war"
                 else
@@ -131,6 +171,7 @@ pipeline {
 
                 echo "✅ Application started"
                 echo "🌐 http://localhost:8080"
+                echo "📄 Logs: app.log"
             '''
             }
         }
