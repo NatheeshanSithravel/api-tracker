@@ -20,7 +20,7 @@ properties([
                 return ["-- Rollback disabled --"]
             }
 
-            def nexusUrl = "http://192.168.56.103:8081/repository/raw-war-backup/api-set-tracker/"
+            def nexusUrl = "http://192.168.56.103:8081/#browse/browse:raw-war-backup:api-set-tracker/"
             def user = "admin"
             def pass = "admin"
 
