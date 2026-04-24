@@ -14,26 +14,30 @@ properties([
       script: [
         $class: 'GroovyScript',
         script: [
-          sandbox: true,
+          sandbox: false,   // IMPORTANT: allow HTTP + JSON
           script: '''
             if (!ROLLBACK) {
                 return ["-- Rollback disabled --"]
             }
 
-            def nexusUrl = "http://192.168.56.103:8081/#browse/browse:raw-war-backup:api-set-tracker/"
+            def nexusApi = "http://192.168.56.103:8081/service/rest/v1/assets?repository=raw-war-backup"
+
             def user = "admin"
             def pass = "admin"
 
-            def connection = new URL(nexusUrl).openConnection()
+            def connection = new URL(nexusApi).openConnection()
             String basicAuth = user + ":" + pass
             String encoded = basicAuth.bytes.encodeBase64().toString()
             connection.setRequestProperty("Authorization", "Basic " + encoded)
 
-            def html = connection.inputStream.text
+            def json = new groovy.json.JsonSlurper().parse(connection.inputStream)
 
             def files = []
-            html.eachMatch(/api-tracker-[^"]+\\.war/) { match ->
-                files << match
+
+            json.items.each { item ->
+                if (item.path.startsWith("api-set-tracker/") && item.path.endsWith(".war")) {
+                    files << item.path.replace("api-set-tracker/", "")
+                }
             }
 
             return files.unique().sort().reverse()
@@ -58,24 +62,19 @@ pipeline {
     stages {
 
         stage('Build') {
-            when {
-                expression { return !params.ROLLBACK }
-            }
+            when { expression { !params.ROLLBACK } }
             steps {
                 sh 'mvn clean package'
             }
         }
 
         stage('Upload with Timestamp') {
-            when {
-                expression { return !params.ROLLBACK }
-            }
+            when { expression { !params.ROLLBACK } }
             steps {
                 sh '''
                 set -e
 
                 BASE_URL=$NEXUS_URL/repository/$REPO/$BASE_PATH
-
                 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
                 FILE_NAME="api-tracker-$TIMESTAMP.war"
 
@@ -89,9 +88,7 @@ pipeline {
         }
 
         stage('Cleanup Old Backups (Keep Last 5)') {
-            when {
-                expression { return !params.ROLLBACK }
-            }
+            when { expression { !params.ROLLBACK } }
             steps {
                 sh '''
                 set -e
@@ -99,8 +96,7 @@ pipeline {
                 BASE_URL=$NEXUS_URL/repository/$REPO/$BASE_PATH
 
                 FILE_LIST=$(curl -s -u $CREDS "$BASE_URL/" | \
-                    grep -o 'api-tracker-[^"]*\\.war' | \
-                    sort)
+                    grep -o 'api-tracker-[^"]*\\.war' | sort)
 
                 COUNT=$(echo "$FILE_LIST" | wc -l)
 
@@ -111,7 +107,6 @@ pipeline {
 
                     echo "$FILE_LIST" | head -n $REMOVE_COUNT | while read FILE
                     do
-                        echo "Deleting $FILE"
                         curl -s -u $CREDS -X DELETE "$BASE_URL/$FILE"
                     done
                 else
@@ -122,9 +117,7 @@ pipeline {
         }
 
         stage('Download Rollback Artifact') {
-            when {
-                expression { return params.ROLLBACK }
-            }
+            when { expression { params.ROLLBACK } }
             steps {
                 sh '''
                 set -e
@@ -170,9 +163,7 @@ pipeline {
                 sleep 5
 
                 echo "✅ Application started"
-                echo "🌐 http://localhost:8080"
-                echo "📄 Logs: app.log"
-            '''
+                '''
             }
         }
     }
